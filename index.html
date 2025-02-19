@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曹的网页</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            font-family: Arial, sans-serif; /* 添加字体 */
+            background: url('your-background-image2.jpg') no-repeat center center fixed; /* 设置背景 */
+            background-size: cover; /* 确保覆盖整个背景 */
+        }
+        .sidebar {
+            width: 200px;
+            background-color: rgba(51, 51, 51, 0.9);
+            color: white;
+            padding-top: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .main-content {
+            flex: 1;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            font-size: 48px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        h2 {
+            font-size: 48px;
+            color: #000000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        h3 {
+            font-size: 36px;
+            color: #000000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        p {
+            font-size: 24px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        .accordion {
+            width: 100%; /* 让子导航框宽度占满可用空间 */
+            max-width: 600px; /* 设置最大宽度 */
+            margin: 10px 0;
+            background-color: rgba(51, 51, 51, 0.9);
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .panel {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px; /* 增加内边距 */
+            border-radius: 5px;
+            margin: 10px 0; /* 增加外边距 */
+            width: 100%; /* 确保面板宽度固定 */
+            max-width: 800px; /* 增加最大宽度 */
+            max-height: 400px; /* 设置最大高度 */
+            display: flex; /* 使用 flex 布局 */
+            flex-wrap: wrap; /* 允许换行 */
+             overflow-y: auto; /* 当内容超出时出现滚动条 */
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            width: calc(33.33% - 10px); /* 每个卡片占据 1/3 宽度，减去边距 */
+            box-sizing: border-box; /* 包含内边距和边框在内 */
+        }
+        .card img {
+            width: 80px;
+            height: 80px;
+            margin-right: 10px;
+        }
+        /* 动画小人样式 */
+        .character {
+            position: fixed; /* 使用 fixed 定位以实现小人在页面左下角 */
+            bottom: 30px; /* 调整位置距离底部的距离 */
+            left: 20px; /* 调整位置距离左侧的距离 */
+            width: 150px; /* 调整小人大小，更大 */
+            z-index: 10; /* 确保小人在其他元素上方 */
+        }
+        .speech-bubble {
+            position: fixed; /* 使用 fixed 定位 */
+            bottom: 200px; /* 调整气泡距离底部的距离 */
+            left: 100px; /* 根据小人的宽度调整气泡位置 */
+            background-color: rgba(255, 255, 255, 0.9); /* 气泡背景为白色并带透明度 */
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* 添加阴影效果 */
+            display: none;
+            z-index: 50; /* 确保气泡在其他元素上方 */
+            transform: translateX(-50%); /* 气泡水平居中 */
+            color: black; /* 设置气泡内文字颜色为黑色 */
+            font-size: 16px; /* 设置字体大小 */
+        }
+        /**/
+        .search-container {
+            background-color: white; /* 搜索框背景 */
+            border-radius: 25px; /* 圆角效果 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 投影效果 */
+            overflow: hidden; /* 防止内容溢出 */
+        }
+        .search-container input[type="text"] {
+            width: 400px; /* 输入框宽度 */
+            padding: 15px; /* 输入框内边距 */
+            border: none; /* 去掉边框 */
+            border-radius: 25px; /* 圆角效果 */
+            outline: none; /* 去掉输入框焦点时的边框 */
+            font-size: 16px; /* 字体大小 */
+        }
+        .search-container input[type="submit"] {
+            padding: 15px 25px; /* 按钮内边距 */
+            background-color: #4285f4; /* 按钮背景颜色 */
+            color: white; /* 字体颜色 */
+            border: none; /* 去掉边框 */
+            border-radius: 25px; /* 圆角效果 */
+            cursor: pointer; /* 鼠标指针样式 */
+            font-size: 16px; /* 字体大小 */
+            transition: background-color 0.3s; /* 动效 */
+        }
+        .search-container input[type="submit"]:hover {
+            background-color: #357ae8; /* 悬停时的背景颜色 */
+        }
+
+        /**/
+        #noteContainer {
+            display: flex; /* 使用 flexbox 布局 */
+            justify-content: space-between; /* 在主轴方向上分配空间 */
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            gap: 20px; /* 两个区域之间的间距 */
+        }
+        #inputArea {
+            flex: 2; /* 输入区域占据较大空间 */
+            margin-right: 20px; /* 右侧留出空间 */
+        }
+        #noteInput {
+            width: 100%;
+            height: 300px; /* 增加文本区域的高度 */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none; /* 禁止调整大小 */
+        }
+        button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #357ae8; /* 悬停效果 */
+        }
+        #notesList {
+            flex: 1; /* 保存笔记区域占据较小空间 */
+            max-height: 300px; /* 限制高度 */
+            overflow-y: auto; /* 添加滚动条 */
+            border: 1px solid #ddd; /* 添加边框 */
+            border-radius: 5px; /* 圆角 */
+            padding: 10px; /* 内边距 */
+            background-color: #f9f9f9; /* 背景颜色 */
+        }
+        .note {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: black; /* 设置文本颜色为黑色 */
+        }
+        .deleteButton {
+            background-color: #e57373; /* 删除按钮颜色 */
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="#" onclick="showContent(1)">导航 1</a>
+        <a href="#" onclick="showContent(2)">导航 2</a>
+        <a href="#" onclick="showContent(3)">导航 3</a>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <div id="initial-content">
+            <h1>欢迎来到cjz的网页</h1>
+        </div>
+        
+        <!-- 导航 1 的子导航 -->
+        <div id="accordion-content1" class="accordion-content" style="display: none;">
+            <h1>搜你想搜</h1>
+            <div class="search-container">
+                <form id="searchForm" action="https://cn.bing.com/search" method="get">
+                    <input type="text" name="q" placeholder="请输入搜索内容..." id="searchInput" required>
+                </form>
+            </div>
+        </div>
+
+        <!-- 导航 2 的子导航 -->
+        <div id="accordion-content2" class="accordion-content" style="display: none;">
+            <button class="accordion" onclick="togglePanel('panel2_1')">吉大的小网站</button>
+            <div class="panel" id="panel2_1">
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 1">
+                    <a href="https://zhxg.jlu.edu.cn/xg/index" target="_blank">智慧学工</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 2">
+                    <a href="https://vpn.jlu.edu.cn/" target="_blank">吉大VPN</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 3">
+                    <a href="https://ilearntec.jlu.edu.cn/courselibrary-web/index" target="_blank">学在吉大</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 4">
+                    <a href="https://jlu.fy.chaoxing.com/portal/" target="_blank">网络教学平台</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 5">
+                    <a href="https://zbhrj.jlu.edu.cn/" target="_blank">吉大正版</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 6">
+                    <a href="http://lib.jlu.edu.cn/portal/index.aspx" target="_blank">吉大图书馆</a>
+                </div>
+                <div class="card">
+                    <img src="your-image1.jpg" alt="图片 6">
+                    <a href="https://iedu.jlu.edu.cn/" target="_blank">教务管理系统</a>
+                </div>
+            </div>
+            <button class="accordion" onclick="togglePanel('panel2_2')">学习网址</button>
+            <div class="panel" id="panel2_2">
+                <div class="card">
+                    <img src="your-image7.jpg" alt="图片 6">
+                    <a href="https://www.chaoxing.com/" target="_blank">超星学习通</a>
+                </div>
+                
+                
+            </div>
+            <button class="accordion" onclick="togglePanel('panel2_3')">其他</button>
+            <div class="panel" id="panel2_3">
+                <div class="card">
+                    <img src="your-image6.jpg" alt="图片 6">
+                    <a href="https://www.bilibili.com/" target="_blank">bilibili</a>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- 导航 3 的子导航 -->
+        <div id="accordion-content3" class="accordion-content" style="display: none;">
+            <div id="noteContainer">
+                <div id="inputArea">
+                    <h2>写笔记</h2>
+                    <textarea id="noteInput" placeholder="在此输入笔记..."></textarea>
+                    <button id="saveButton">保存笔记</button>
+                </div>
+                
+                <div id="notesList">
+                    <h3>已保存的笔记</h3>
+                </div>
+            </div>
+        </div>
+
+     <!-- 小人与台词 -->
+     <img src="your-character2.gif" class="character" id="character" alt="小人" onclick="showSpeech()">
+     <div class="speech-bubble" id="speechBubble"></div>
+
+    <script>
+
+        const phrases = [
+            "你好呀，博士！",
+            "今天真不错！",
+            "不要这样，博士！",
+            "有什么我可以帮助你的吗？",
+            "我会满足你的，博士！",
+            "祝你有个美好的一天！"
+        ];
+        let currentPhraseIndex = 0;
+
+
+        function showContent(index) {
+            // 隐藏初始内容
+            document.getElementById('initial-content').style.display = 'none';
+            // 隐藏所有的子导航内容
+            resetAllAccordionContents();
+            // 显示对应的子导航内容
+            document.getElementById('accordion-content' + index).style.display = 'block';
+        }
+
+        function showSpeech() {
+            const speechBubble = document.getElementById("speechBubble");
+            speechBubble.innerText = phrases[currentPhraseIndex];
+            speechBubble.style.display = "block";
+
+            currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+
+            setTimeout(() => {
+                speechBubble.style.display = "none";
+            }, 2000); // 2秒后隐藏台词
+        }
+
+        function resetAllAccordionContents() {
+            // 隐藏所有子导航内容
+            var contents = document.getElementsByClassName('accordion-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].style.display = 'none';
+            }
+        }
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel.style.display === "block") {
+                panel.style.display = "none"; // 关闭面板
+            } else {
+                resetPanels(); // 重置所有面板
+                panel.style.display = "block"; // 显示选中的面板
+                ensureHorizontalAlignment(panel); // 确保卡片横向排列
+            }
+        }
+
+        function resetPanels() {
+            // 隐藏所有面板
+            var panels = document.getElementsByClassName('panel');
+            for (var i = 0; i < panels.length; i++) {
+                panels[i].style.display = 'none';
+            }
+        }
+
+        function ensureHorizontalAlignment(panel) {
+            const cards = panel.getElementsByClassName('card');
+            if (cards.length > 0) {
+                for (let card of cards) {
+                    // 确保卡片的样式不受其它样式影响
+                    card.style.display = 'flex'; // 强制每个卡片以 flex 方式显示
+                }
+                panel.style.display = 'flex'; // 确保面板本身也是 flex
+                panel.style.flexWrap = 'wrap'; // 允许换行
+            }
+        }
+
+        const searchInput = document.getElementById("searchInput");
+
+    // 监听输入框的按键事件
+    searchInput.addEventListener("keypress", function(event) {
+        // 检查是否按下 Enter 键
+        if (event.key === "Enter") {
+            event.preventDefault(); // 阻止默认行为（防止表单立即提交）
+            const query = searchInput.value.trim();
+
+            // 如果输入内容不为空，则提交表单进行搜索
+            if (query.length > 0) {
+                const form = document.getElementById("searchForm");
+                form.submit();  // 提交表单
+            }
+        }
+    });
+        
+    const noteInput = document.getElementById('noteInput');
+    const saveButton = document.getElementById('saveButton');
+    const notesList = document.getElementById('notesList');
+
+    // 加载已保存的笔记
+    window.onload = function() {
+        loadNotes();
+    };
+
+    // 保存笔记的函数
+    function saveNote() {
+        const noteText = noteInput.value.trim();
+        if (noteText) {
+            addNoteToList(noteText);
+            noteInput.value = ''; // 清空输入框
+            saveNotesToLocalStorage(); // 保存到 localStorage
+        } else {
+            alert('请输入笔记内容！');
+        }
+    }
+
+    // 将笔记添加到列表的函数
+    function addNoteToList(noteText) {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note';
+        
+        // 限制显示的字符数，最多显示10个字符
+        const truncatedText = noteText.length > 10 ? noteText.substring(0, 10) + '...' : noteText;
+        
+        const textElement = document.createElement('span');
+        textElement.textContent = truncatedText;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'deleteButton';
+        deleteButton.textContent = '删除';
+        deleteButton.onclick = function() {
+            notesList.removeChild(noteElement);
+            saveNotesToLocalStorage(); // 删除后更新 localStorage
+        };
+
+        noteElement.appendChild(textElement);
+        noteElement.appendChild(deleteButton);
+        notesList.appendChild(noteElement);
+    }
+
+    // 保存笔记到 localStorage
+    function saveNotesToLocalStorage() {
+        const notes = [];
+        const noteElements = notesList.getElementsByClassName('note');
+        for (let noteElement of noteElements) {
+            notes.push(noteElement.firstChild.textContent); // 获取笔记文本
+        }
+        localStorage.setItem('notes', JSON.stringify(notes));
+    }
+
+    // 从 localStorage 加载笔记
+    function loadNotes() {
+        const notes = JSON.parse(localStorage.getItem('notes')) || [];
+        for (let note of notes) {
+            addNoteToList(note);
+        }
+    }
+
+    // 绑定保存按钮的点击事件
+    saveButton.onclick = saveNote;
+    </script>
+
+</body>
+</html>
